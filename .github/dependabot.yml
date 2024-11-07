@@ -6,9 +6,14 @@ updates:
       interval: daily
     labels:
       - "dependencies"
+    ignore:
+      - dependency-name: "homeassistant"
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
       interval: daily
     labels:
       - "dependencies"
+    ignore:
+      - dependency-name: "crazy-max/ghaction-github-labeler"
+        versions: ["5.1.0"]
