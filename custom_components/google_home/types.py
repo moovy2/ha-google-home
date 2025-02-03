@@ -1,11 +1,15 @@
 """Various types used in type hints."""
+
 from __future__ import annotations
 
-from typing import List, Mapping, TypedDict, Union
+from collections.abc import Mapping
+from typing import TypedDict
+
+from homeassistant.config_entries import ConfigEntry
 
 
 class AlarmJsonDict(TypedDict, total=False):
-    """Typed dict for JSON representation of alarm returned by Google Home API"""
+    """Typed dict for JSON representation of alarm returned by Google Home API."""
 
     id: str
     fire_time: int
@@ -15,7 +19,7 @@ class AlarmJsonDict(TypedDict, total=False):
 
 
 class TimerJsonDict(TypedDict, total=False):
-    """Typed dict for JSON representation of timer returned by Google Home API"""
+    """Typed dict for JSON representation of timer returned by Google Home API."""
 
     id: str
     fire_time: int
@@ -25,7 +29,7 @@ class TimerJsonDict(TypedDict, total=False):
 
 
 class GoogleHomeAlarmDict(TypedDict):
-    """Typed dict representation of Google Home alarm"""
+    """Typed dict representation of Google Home alarm."""
 
     alarm_id: str
     fire_time: int
@@ -37,7 +41,7 @@ class GoogleHomeAlarmDict(TypedDict):
 
 
 class GoogleHomeTimerDict(TypedDict):
-    """Typed dict representation of Google Home timer"""
+    """Typed dict representation of Google Home timer."""
 
     timer_id: str
     fire_time: int | None
@@ -49,7 +53,7 @@ class GoogleHomeTimerDict(TypedDict):
 
 
 class DeviceAttributes(TypedDict):
-    """Typed dict for device attributes"""
+    """Typed dict for device attributes."""
 
     device_id: str | None
     device_name: str
@@ -59,7 +63,7 @@ class DeviceAttributes(TypedDict):
 
 
 class AlarmsAttributes(TypedDict):
-    """Typed dict for alarms attributes"""
+    """Typed dict for alarms attributes."""
 
     next_alarm_status: str
     alarm_volume: float
@@ -67,35 +71,29 @@ class AlarmsAttributes(TypedDict):
 
 
 class TimersAttributes(TypedDict):
-    """Typed dict for timers attributes"""
+    """Typed dict for timers attributes."""
 
     next_timer_status: str
     timers: list[GoogleHomeTimerDict]
 
 
-class DeviceInfo(TypedDict):
-    """Typed dict for device_info"""
-
-    identifiers: set[tuple[str, str]]
-    name: str
-    manufacturer: str
-    model: str
-
-
 class ConfigFlowDict(TypedDict):
-    """Typed dict for config flow handler"""
+    """Typed dict for config flow handler."""
 
     username: str
     password: str
+    master_token: str
 
 
 class OptionsFlowDict(TypedDict):
-    """Typed dict for options flow handler"""
+    """Typed dict for options flow handler."""
 
     update_interval: int
 
 
-JsonDict = Mapping[
+type JsonDict = Mapping[
     str,
-    Union[bool, float, int, str, List[str], List[AlarmJsonDict], List[TimerJsonDict]],
+    bool | float | int | str | list[str] | list[AlarmJsonDict] | list[TimerJsonDict],
 ]
+
+type GoogleHomeConfigEntry = ConfigEntry[None]

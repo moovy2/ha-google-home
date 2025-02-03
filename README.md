@@ -45,7 +45,7 @@
 
 This is a custom component that is emerging from the
 [community discussion][community-discussion] of a need to be able to retrieve
-local google assistant device (like Google Home/Nest etc) authentication
+local Google Assistant device (like Google Home/Nest etc) authentication
 tokens and use those tokens making API calls to Google Home devices.
 
 ## IMPORTANT
@@ -85,7 +85,7 @@ Each of the alarms has the following keys:
 | `label`          | Name                         | Name of the alarm, this can be set when making the alarm                                                                                                                                                |
 | `recurrence`     | List of integers             | Days of the week when the alarm will go off. Please note, respecting Google set standard, the week starts from Sunday, therefore is denoted by 0. Correspondingly, Monday is 1, Saturday is 6 and so on |
 
-The state value shows the next alarm as a timestring (i.e.: `2021-03-07T15:26:17+01:00`) if there is at least one alarm set, otherwise it is set to `unavailable`.
+The state value shows the next alarm as a time string (i.e.: `2021-03-07T15:26:17+01:00`) if there is at least one alarm set, otherwise it is set to `unavailable`.
 This matches state format of [standard next alarm sensor](https://companion.home-assistant.io/docs/core/sensors/#next-alarm-sensor) provided by `mobile_app`.
 
 This sensor is formatted to be compatible with the mobile app sensor, e.g. `sensor.phone_next_alarm`.
@@ -155,14 +155,16 @@ service: google_home.delete_alarm
 data:
   entity_id: sensor.kitchen_alarms
   timer_id: alarm/47dc1fa0-5ec0-2cc7-9ead-a94b85e22769
+  skip_refresh: true
 ```
 
 #### Key Descriptions
 
-| Key         | Example                                      | Description                                   |
-| ----------- | -------------------------------------------- | --------------------------------------------- |
-| `entity_id` | `sensor.kitchen_alarms`                      | Entity name of a Google Home alarms sensor.   |
-| `alarm_id`  | `alarm/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51` | ID of an alarm. See alarms description above. |
+| Key            | Example                                      | Description                                     |
+| -------------- | -------------------------------------------- | ----------------------------------------------- |
+| `entity_id`    | `sensor.kitchen_alarms`                      | Entity name of a Google Home alarms sensor.     |
+| `alarm_id`     | `alarm/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51` | ID of an alarm. See alarms description above.   |
+| `skip_refresh` | `true`                                       | Boolean to skip refreshing Google Home devices. |
 
 ### Delete timer
 
@@ -173,14 +175,16 @@ service: google_home.delete_timer
 data:
   entity_id: sensor.kitchen_timers
   timer_id: timer/47dc1fa0-5ec0-2cc7-9ead-a94b85e22769
+  skip_refresh: true
 ```
 
 #### Key Descriptions
 
-| Key         | Example                                      | Description                                  |
-| ----------- | -------------------------------------------- | -------------------------------------------- |
-| `entity_id` | `sensor.kitchen_timers`                      | Entity name of a Google Home timers sensor.  |
-| `timer_id`  | `timer/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51` | ID of a timer. See timers description above. |
+| Key            | Example                                      | Description                                     |
+| -------------- | -------------------------------------------- | ----------------------------------------------- |
+| `entity_id`    | `sensor.kitchen_timers`                      | Entity name of a Google Home timers sensor.     |
+| `timer_id`     | `timer/6ed06a56-8a58-c6e3-a7d4-03f92c9d8a51` | ID of a timer. See timers description above.    |
+| `skip_refresh` | `true`                                       | Boolean to skip refreshing Google Home devices. |
 
 ### Reboot device
 
@@ -200,11 +204,21 @@ data:
 | ----------- | ----------------------- | ------------------------------------------- |
 | `entity_id` | `sensor.kitchen_device` | Entity name of a Google Home device sensor. |
 
+### Refresh devices
+
+Note: Resets the timer for automatic polling to refresh devices.
+
+#### Example
+
+```yaml
+service: google_home.refresh_devices
+```
+
 ## Getting Started
 
 ### Prerequisites
 
-Use Home Assistant v2022.6.0 or above.
+Use Home Assistant v2024.11.0 or above.
 
 ### Google Account security
 
@@ -216,6 +230,18 @@ We encourage you to create a separate Google account and add it to your Google H
 Your second account would not have access to anything other than Google Home, so even if it
 gets compromised, it's not as severe as losing your main google account.
 See more discussion [here](https://github.com/leikoilja/ha-google-home/issues/124#issuecomment-921773489)
+
+### Master token
+
+Due to authentication issues with google credentials alone it may be required to get the master token separately and provide it during the setup process. This can be done using [this script](https://gist.github.com/rithvikvibhu/952f83ea656c6782fbd0f1645059055d) or [glocaltokens](https://github.com/leikoilja/glocaltokens#quickstart) package.
+
+Since there are several issues getting the token reliable on different environments, you can use a community created [docker image](https://hub.docker.com/r/breph/ha-google-home_get-token) which was created solely for helping to get a master token reliably. If you choose to use this docker container, run the following command:
+
+```
+$ docker run --rm -it breph/ha-google-home_get-token
+```
+
+You fill find more detailed instructions on how to run the docker container [here](https://github.com/leikoilja/ha-google-home/issues/890#issuecomment-2515002294).
 
 ### HACS Installation
 
@@ -270,7 +296,7 @@ Make sure that you have your Home Assistant Container network set to `host`, as 
 
 ### ARM Docker Container Dependencies Workaround
 
-If you are installing this integration on an ARM based device (Like Raspberry Pi, Synology, etc), you may need to do the following if you get this error:
+If you are installing this integration on an ARM based device (Like Raspberry Pi, Synology, etc.), you may need to do the following if you get this error:
 
 ```
 ERROR: Cannot install glocaltokens==0.3.1
@@ -403,14 +429,16 @@ Currently the integration supports the following languages:
 - Danish
 - Dutch
 - English
+- French
 - German (Germany)
 - Italian (Italy)
 - Norwegian (bokmål and nynorsk)
 - Polish
-- Portuguese (Portugal)
 - Portuguese (Brazil)
-- Spanish (Spain)
+- Portuguese (Portugal)
 - Russian
+- Slovak
+- Spanish (Spain)
 - Ukrainian
 
 If you want to translate the project to your own language, follow the [Localization guide](LOCALIZATION.md).
@@ -429,7 +457,7 @@ If you want to translate the project to your own language, follow the [Localizat
 [integration_blueprint]: https://github.com/custom-components/integration_blueprint
 [releases-shield]: https://img.shields.io/github/release/leikoilja/ha-google-home.svg?style=for-the-badge
 [releases]: https://github.com/leikoilja/ha-google-home/releases
-[workflow-shield]: https://img.shields.io/github/workflow/status/leikoilja/ha-google-home/Linting?style=for-the-badge
+[workflow-shield]: https://img.shields.io/github/actions/workflow/status/leikoilja/ha-google-home/linting.yaml?branch=master&style=for-the-badge
 [workflow]: https://github.com/leikoilja/ha-google-home/actions
-[installs-shield]: https://img.shields.io/endpoint?style=for-the-badge&url=https%3A%2F%2Frunkit.io%2Fkapji%2Fgoogle-home-installs-for-shield-io%2F3.0.0
+[installs-shield]: https://img.shields.io/badge/dynamic/json?style=for-the-badge&color=blue&label=installs&cacheSeconds=3600&url=https://analytics.home-assistant.io/custom_integrations.json&query=$.google_home.total
 [installs]: https://analytics.home-assistant.io/custom_integrations.json
